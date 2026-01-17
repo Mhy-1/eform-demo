@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormField, FormSettings } from '../../types/form';
 import { Button } from '../ui/Button';

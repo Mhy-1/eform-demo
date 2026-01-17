@@ -1,5 +1,4 @@
-import React from 'react';
-import { FileText, Edit, Eye, Copy, Trash2, MoreVertical } from 'lucide-react';
+import { FileText, Edit, Eye, Copy, Trash2 } from 'lucide-react';
 import { FormDefinition } from '../types/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';

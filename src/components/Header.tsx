@@ -1,5 +1,4 @@
-import React from 'react';
-import { FileText, Github, ExternalLink } from 'lucide-react';
+import { FileText, Github } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface HeaderProps {
@@ -21,17 +20,15 @@ export function Header({ onNewForm }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" asChild>
-            <a
-              href="https://github.com/msharydajam/eform-demo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <Github className="w-4 h-4" />
-              <span className="hidden sm:inline">View Source</span>
-            </a>
-          </Button>
+          <a
+            href="https://github.com/Mhy-1/eform-demo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 h-9 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground"
+          >
+            <Github className="w-4 h-4" />
+            <span className="hidden sm:inline">View Source</span>
+          </a>
           <Button onClick={onNewForm}>
             <span className="mr-2">+</span>
             New Form

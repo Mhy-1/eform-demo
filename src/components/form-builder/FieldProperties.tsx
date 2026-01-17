@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { FormField, FieldOption } from '../../types/form';
 import { Button } from '../ui/Button';

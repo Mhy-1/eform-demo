@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { ArrowLeft, Eye, Save, Settings, FileJson } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Save, FileJson } from 'lucide-react';
 import { FormDefinition, FormField, FormSettings } from './types/form';
 import { mockForms, formCategories } from './data/mockForms';
 import { generateId } from './utils/id';
@@ -9,7 +9,7 @@ import { FormBuilder, FormPreview } from './components/form-builder';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Label } from './components/ui/Label';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/Tabs';
+import { Tabs, TabsList, TabsTrigger } from './components/ui/Tabs';
 import {
   Dialog,
   DialogContent,
@@ -291,7 +291,7 @@ function App() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+                <Tabs defaultValue="build" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                   <TabsList>
                     <TabsTrigger value="build">Build</TabsTrigger>
                     <TabsTrigger value="preview">Preview</TabsTrigger>
