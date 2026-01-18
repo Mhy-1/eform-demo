@@ -20,7 +20,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
   const onFormSubmit = (data: Record<string, unknown>) => {
     console.log('Form submitted:', data);
     onSubmit?.(data);
-    alert(settings.successMessage || 'Form submitted successfully!');
+    alert(settings.successMessage || 'تم إرسال النموذج بنجاح!');
     reset();
   };
 
@@ -89,7 +89,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
             id={field.id}
             type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'text'}
             placeholder={field.placeholder}
-            {...register(field.id, { required: field.required && 'This field is required' })}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
             className={baseInputClass}
           />
         );
@@ -100,7 +100,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
             id={field.id}
             placeholder={field.placeholder}
             rows={4}
-            {...register(field.id, { required: field.required && 'This field is required' })}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
             className={cn(baseInputClass, 'resize-none')}
           />
         );
@@ -112,7 +112,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
             type="number"
             placeholder={field.placeholder}
             {...register(field.id, {
-              required: field.required && 'This field is required',
+              required: field.required && 'هذا الحقل مطلوب',
               valueAsNumber: true,
             })}
             className={baseInputClass}
@@ -124,7 +124,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
           <input
             id={field.id}
             type="date"
-            {...register(field.id, { required: field.required && 'This field is required' })}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
             className={baseInputClass}
           />
         );
@@ -134,7 +134,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
           <input
             id={field.id}
             type="time"
-            {...register(field.id, { required: field.required && 'This field is required' })}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
             className={baseInputClass}
           />
         );
@@ -143,10 +143,10 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
         return (
           <select
             id={field.id}
-            {...register(field.id, { required: field.required && 'This field is required' })}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
             className={baseInputClass}
           >
-            <option value="">Select an option...</option>
+            <option value="">اختر خياراً...</option>
             {field.options?.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -164,7 +164,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
               {...register(field.id)}
               className="h-4 w-4 rounded border-gray-300"
             />
-            <span className="text-sm">Yes</span>
+            <span className="text-sm">نعم</span>
           </div>
         );
 
@@ -178,7 +178,7 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
                   type="radio"
                   value={opt.value}
                   {...register(field.id, {
-                    required: field.required && 'Please select an option',
+                    required: field.required && 'الرجاء اختيار خيار',
                   })}
                   className="h-4 w-4"
                 />
@@ -201,10 +201,10 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
             />
             <label htmlFor={field.id} className="cursor-pointer">
               <p className="text-sm text-muted-foreground">
-                Click to upload or drag and drop
+                انقر للرفع أو اسحب وأفلت
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                PDF, DOC, JPG, PNG up to 10MB
+                PDF, DOC, JPG, PNG حتى 10MB
               </p>
             </label>
           </div>
@@ -214,10 +214,10 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
         return (
           <div className="border-2 border-dashed border-input rounded-md p-8 text-center bg-muted/30">
             <p className="text-sm text-muted-foreground">
-              Signature capture would appear here
+              لوحة التوقيع ستظهر هنا
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              (Demo mode - signature pad disabled)
+              (الوضع التجريبي - لوحة التوقيع معطلة)
             </p>
           </div>
         );
@@ -234,11 +234,11 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
 
         <div className="flex gap-3 pt-6 border-t mt-6">
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : settings.submitButtonText || 'Submit'}
+            {isSubmitting ? 'جاري الإرسال...' : settings.submitButtonText || 'إرسال'}
           </Button>
           {settings.allowSaveDraft && (
             <Button type="button" variant="outline">
-              Save Draft
+              حفظ كمسودة
             </Button>
           )}
         </div>

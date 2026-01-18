@@ -1,4 +1,4 @@
-import { FileText, Github } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface HeaderProps {
@@ -14,26 +14,15 @@ export function Header({ onNewForm }: HeaderProps) {
             <FileText className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold">E-Form Builder</h1>
-            <p className="text-xs text-muted-foreground">Dynamic Form Creation Platform</p>
+            <h1 className="text-lg font-bold">منشئ النماذج الإلكترونية</h1>
+            <p className="text-xs text-muted-foreground">منصة إنشاء النماذج الديناميكية</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="https://github.com/Mhy-1/eform-demo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 h-9 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground"
-          >
-            <Github className="w-4 h-4" />
-            <span className="hidden sm:inline">View Source</span>
-          </a>
-          <Button onClick={onNewForm}>
-            <span className="mr-2">+</span>
-            New Form
-          </Button>
-        </div>
+        <Button onClick={onNewForm}>
+          <span className="ml-2">+</span>
+          نموذج جديد
+        </Button>
       </div>
     </header>
   );

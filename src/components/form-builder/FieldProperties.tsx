@@ -14,9 +14,9 @@ interface FieldPropertiesProps {
 export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesProps) {
   if (!field) {
     return (
-      <div className="w-72 border-l bg-muted/30 p-4">
+      <div className="w-72 border-r bg-muted/30 p-4">
         <p className="text-sm text-muted-foreground text-center mt-8">
-          Select a field to edit its properties
+          اختر حقلاً لتعديل خصائصه
         </p>
       </div>
     );
@@ -28,7 +28,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
 
   const addOption = () => {
     const newOption: FieldOption = {
-      label: `Option ${(field.options?.length || 0) + 1}`,
+      label: `الخيار ${(field.options?.length || 0) + 1}`,
       value: `option-${generateId()}`,
     };
     updateField({ options: [...(field.options || []), newOption] });
@@ -47,10 +47,28 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
 
   const hasOptions = field.type === 'select' || field.type === 'radio';
 
+  // Arabic field type labels
+  const fieldTypeLabels: Record<string, string> = {
+    text: 'حقل نص',
+    textarea: 'منطقة نص',
+    number: 'رقم',
+    email: 'البريد الإلكتروني',
+    phone: 'رقم الهاتف',
+    date: 'التاريخ',
+    time: 'الوقت',
+    select: 'قائمة منسدلة',
+    checkbox: 'خيار متعدد',
+    radio: 'اختيار واحد',
+    file: 'رفع ملف',
+    signature: 'التوقيع',
+    section: 'عنوان القسم',
+    divider: 'فاصل',
+  };
+
   return (
-    <div className="w-72 border-l bg-muted/30 overflow-y-auto">
+    <div className="w-72 border-r bg-muted/30 overflow-y-auto">
       <div className="sticky top-0 bg-muted/30 border-b p-4 flex items-center justify-between">
-        <h3 className="font-semibold">Field Properties</h3>
+        <h3 className="font-semibold">خصائص الحقل</h3>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
           <X className="w-4 h-4" />
         </Button>
@@ -59,7 +77,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
       <div className="p-4 space-y-4">
         {/* Label */}
         <div className="space-y-2">
-          <Label htmlFor="field-label">Label</Label>
+          <Label htmlFor="field-label">العنوان</Label>
           <Input
             id="field-label"
             value={field.label}
@@ -70,7 +88,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
         {/* Placeholder */}
         {['text', 'textarea', 'email', 'phone', 'number'].includes(field.type) && (
           <div className="space-y-2">
-            <Label htmlFor="field-placeholder">Placeholder</Label>
+            <Label htmlFor="field-placeholder">نص توضيحي</Label>
             <Input
               id="field-placeholder"
               value={field.placeholder || ''}
@@ -81,19 +99,19 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
 
         {/* Description */}
         <div className="space-y-2">
-          <Label htmlFor="field-description">Help Text</Label>
+          <Label htmlFor="field-description">نص المساعدة</Label>
           <Input
             id="field-description"
             value={field.description || ''}
             onChange={(e) => updateField({ description: e.target.value })}
-            placeholder="Additional instructions..."
+            placeholder="تعليمات إضافية..."
           />
         </div>
 
         {/* Required */}
         {field.type !== 'section' && field.type !== 'divider' && (
           <div className="flex items-center justify-between">
-            <Label htmlFor="field-required">Required</Label>
+            <Label htmlFor="field-required">مطلوب</Label>
             <input
               type="checkbox"
               id="field-required"
@@ -106,7 +124,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
 
         {/* Width */}
         <div className="space-y-2">
-          <Label>Field Width</Label>
+          <Label>عرض الحقل</Label>
           <div className="flex gap-2">
             {(['full', 'half', 'third'] as const).map((width) => (
               <Button
@@ -114,9 +132,9 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
                 variant={field.width === width ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => updateField({ width })}
-                className="flex-1 capitalize"
+                className="flex-1"
               >
-                {width === 'full' ? '100%' : width === 'half' ? '50%' : '33%'}
+                {width === 'full' ? '١٠٠٪' : width === 'half' ? '٥٠٪' : '٣٣٪'}
               </Button>
             ))}
           </div>
@@ -126,10 +144,10 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
         {hasOptions && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label>Options</Label>
+              <Label>الخيارات</Label>
               <Button variant="ghost" size="sm" onClick={addOption}>
-                <Plus className="w-4 h-4 mr-1" />
-                Add
+                <Plus className="w-4 h-4 ml-1" />
+                إضافة
               </Button>
             </div>
             <div className="space-y-2">
@@ -158,10 +176,10 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
         {/* Field Type Info */}
         <div className="pt-4 border-t">
           <p className="text-xs text-muted-foreground">
-            Field Type: <span className="font-medium capitalize">{field.type}</span>
+            نوع الحقل: <span className="font-medium">{fieldTypeLabels[field.type] || field.type}</span>
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            ID: <span className="font-mono text-[10px]">{field.id}</span>
+            المعرّف: <span className="font-mono text-[10px]" dir="ltr">{field.id}</span>
           </p>
         </div>
       </div>

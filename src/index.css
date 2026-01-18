@@ -33,6 +33,22 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+    direction: rtl;
+    text-align: right;
+    line-height: 1.7;
+  }
+
+  /* RTL-specific input styling */
+  input, textarea, select {
+    text-align: right;
+  }
+
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"] {
+    direction: ltr;
+    text-align: right;
   }
 }
 
@@ -63,4 +79,18 @@
 
 .drop-indicator {
   @apply border-2 border-dashed border-primary bg-primary/5 rounded-lg;
+}
+
+/* Skeleton animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

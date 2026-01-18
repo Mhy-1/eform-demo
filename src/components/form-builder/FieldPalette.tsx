@@ -77,14 +77,14 @@ export function FieldPalette() {
   const layoutFields = fieldTypes.filter((f) => f.category === 'layout');
 
   return (
-    <div className="w-64 border-r bg-muted/30 p-4 overflow-y-auto">
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
-        Field Types
+    <div className="w-64 border-l bg-muted/30 p-4 overflow-y-auto">
+      <h3 className="text-sm font-semibold text-muted-foreground mb-4">
+        أنواع الحقول
       </h3>
 
       <div className="space-y-6">
         <div>
-          <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase">Basic</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-2">أساسي</h4>
           <div className="space-y-2">
             {basicFields.map((field) => (
               <DraggableField key={field.type} field={field} />
@@ -93,7 +93,7 @@ export function FieldPalette() {
         </div>
 
         <div>
-          <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase">Advanced</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-2">متقدم</h4>
           <div className="space-y-2">
             {advancedFields.map((field) => (
               <DraggableField key={field.type} field={field} />
@@ -102,7 +102,7 @@ export function FieldPalette() {
         </div>
 
         <div>
-          <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase">Layout</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-2">التخطيط</h4>
           <div className="space-y-2">
             {layoutFields.map((field) => (
               <DraggableField key={field.type} field={field} />

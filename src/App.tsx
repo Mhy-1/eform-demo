@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { ArrowLeft, Save, FileJson } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Save, FileJson } from 'lucide-react';
 import { FormDefinition, FormField, FormSettings } from './types/form';
 import { mockForms, formCategories } from './data/mockForms';
 import { generateId } from './utils/id';
 import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import { FormList } from './components/FormList';
+import { FormListSkeleton } from './components/ui/Skeleton';
 import { FormBuilder, FormPreview } from './components/form-builder';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
@@ -19,6 +21,16 @@ import {
   DialogFooter,
 } from './components/ui/Dialog';
 import { Toaster, toast } from 'sonner';
+
+// Arabic category labels
+const categoryLabels: Record<string, string> = {
+  'All': 'جميع التصنيفات',
+  'HR': 'الموارد البشرية',
+  'Safety': 'السلامة',
+  'Security': 'الأمن',
+  'Operations': 'العمليات',
+  'IT': 'تقنية المعلومات',
+};
 
 type ViewMode = 'list' | 'builder' | 'preview';
 
@@ -35,11 +47,20 @@ function App() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate initial loading for demo effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Form Settings
   const [formSettings, setFormSettings] = useState<FormSettings>({
-    submitButtonText: 'Submit',
-    successMessage: 'Form submitted successfully!',
+    submitButtonText: 'إرسال',
+    successMessage: 'تم إرسال النموذج بنجاح!',
     allowSaveDraft: true,
     requireSignature: false,
     notifyOnSubmit: true,
@@ -65,7 +86,7 @@ function App() {
 
   const createNewForm = () => {
     if (!newFormName.trim()) {
-      toast.error('Please enter a form name');
+      toast.error('الرجاء إدخال اسم النموذج');
       return;
     }
 
@@ -88,7 +109,7 @@ function App() {
     setViewMode('builder');
     setActiveTab('build');
     setShowNewFormDialog(false);
-    toast.success('New form created');
+    toast.success('تم إنشاء النموذج بنجاح');
   };
 
   const handleEditForm = (form: FormDefinition) => {
@@ -113,18 +134,18 @@ function App() {
     const duplicatedForm: FormDefinition = {
       ...form,
       id: `form-${generateId()}`,
-      name: `${form.name} (Copy)`,
+      name: `${form.name} (نسخة)`,
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     setForms([duplicatedForm, ...forms]);
-    toast.success('Form duplicated');
+    toast.success('تم نسخ النموذج');
   };
 
   const handleDeleteForm = (formId: string) => {
     setForms(forms.filter((f) => f.id !== formId));
-    toast.success('Form deleted');
+    toast.success('تم حذف النموذج');
   };
 
   const handleSaveForm = () => {
@@ -153,7 +174,7 @@ function App() {
     }
 
     setCurrentForm(updatedForm);
-    toast.success('Form saved successfully');
+    toast.success('تم حفظ النموذج بنجاح');
   };
 
   const handlePublishForm = () => {
@@ -184,7 +205,7 @@ function App() {
     }
 
     setCurrentForm(updatedForm);
-    toast.success('Form published!');
+    toast.success('تم نشر النموذج بنجاح!');
   };
 
   const handleBackToList = () => {
@@ -218,21 +239,21 @@ function App() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success('Form exported as JSON');
+    toast.success('تم تصدير النموذج بصيغة JSON');
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Toaster position="top-right" richColors />
+    <div className="min-h-screen bg-background flex flex-col">
+      <Toaster position="top-left" richColors />
 
       {viewMode === 'list' && (
         <>
           <Header onNewForm={handleNewForm} />
-          <main className="container px-4 py-8">
+          <main className="container px-4 py-8 flex-1">
             {/* Filters */}
             <div className="mb-6 flex flex-wrap gap-4 items-center">
               <Input
-                placeholder="Search forms..."
+                placeholder="بحث في النماذج..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="max-w-xs"
@@ -244,7 +265,7 @@ function App() {
               >
                 {formCategories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat === 'All' ? 'All Categories' : cat}
+                    {categoryLabels[cat] || cat}
                   </option>
                 ))}
               </select>
@@ -253,21 +274,26 @@ function App() {
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="px-3 py-2 border rounded-md bg-background text-sm"
               >
-                <option value="All">All Statuses</option>
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-                <option value="archived">Archived</option>
+                <option value="All">جميع الحالات</option>
+                <option value="draft">مسودة</option>
+                <option value="published">منشور</option>
+                <option value="archived">مؤرشف</option>
               </select>
             </div>
 
-            <FormList
-              forms={filteredForms}
-              onEdit={handleEditForm}
-              onPreview={handlePreviewForm}
-              onDuplicate={handleDuplicateForm}
-              onDelete={handleDeleteForm}
-            />
+            {isLoading ? (
+              <FormListSkeleton count={3} />
+            ) : (
+              <FormList
+                forms={filteredForms}
+                onEdit={handleEditForm}
+                onPreview={handlePreviewForm}
+                onDuplicate={handleDuplicateForm}
+                onDelete={handleDeleteForm}
+              />
+            )}
           </main>
+          <Footer />
         </>
       )}
 
@@ -278,13 +304,13 @@ function App() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Button variant="ghost" size="sm" onClick={handleBackToList}>
-                  <ArrowLeft className="w-4 h-4 mr-1" />
-                  Back
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                  رجوع
                 </Button>
                 <div>
                   <h1 className="font-semibold">{currentForm.name}</h1>
                   <p className="text-xs text-muted-foreground">
-                    {currentForm.status === 'published' ? 'Published' : 'Draft'} - v
+                    {currentForm.status === 'published' ? 'منشور' : 'مسودة'} - الإصدار
                     {currentForm.version}
                   </p>
                 </div>
@@ -293,23 +319,23 @@ function App() {
               <div className="flex items-center gap-2">
                 <Tabs defaultValue="build" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                   <TabsList>
-                    <TabsTrigger value="build">Build</TabsTrigger>
-                    <TabsTrigger value="preview">Preview</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
+                    <TabsTrigger value="build">البناء</TabsTrigger>
+                    <TabsTrigger value="preview">معاينة</TabsTrigger>
+                    <TabsTrigger value="settings">الإعدادات</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center gap-2 mr-4">
                   <Button variant="outline" size="sm" onClick={exportFormJson}>
-                    <FileJson className="w-4 h-4 mr-1" />
-                    Export
+                    <FileJson className="w-4 h-4 ml-1" />
+                    تصدير
                   </Button>
                   <Button variant="outline" size="sm" onClick={handleSaveForm}>
-                    <Save className="w-4 h-4 mr-1" />
-                    Save
+                    <Save className="w-4 h-4 ml-1" />
+                    حفظ
                   </Button>
                   <Button size="sm" onClick={handlePublishForm}>
-                    Publish
+                    نشر
                   </Button>
                 </div>
               </div>
@@ -337,11 +363,11 @@ function App() {
             {activeTab === 'settings' && (
               <div className="h-full overflow-y-auto p-6 bg-muted/20">
                 <div className="max-w-2xl mx-auto bg-background rounded-lg shadow-sm border p-6">
-                  <h2 className="text-lg font-semibold mb-6">Form Settings</h2>
+                  <h2 className="text-lg font-semibold mb-6">إعدادات النموذج</h2>
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="submit-text">Submit Button Text</Label>
+                      <Label htmlFor="submit-text">نص زر الإرسال</Label>
                       <Input
                         id="submit-text"
                         value={formSettings.submitButtonText}
@@ -352,7 +378,7 @@ function App() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="success-message">Success Message</Label>
+                      <Label htmlFor="success-message">رسالة النجاح</Label>
                       <Input
                         id="success-message"
                         value={formSettings.successMessage}
@@ -363,7 +389,7 @@ function App() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Theme</Label>
+                      <Label>المظهر</Label>
                       <div className="flex gap-2">
                         {(['default', 'compact', 'modern'] as const).map((theme) => (
                           <Button
@@ -371,22 +397,21 @@ function App() {
                             variant={formSettings.theme === theme ? 'default' : 'outline'}
                             size="sm"
                             onClick={() => setFormSettings({ ...formSettings, theme })}
-                            className="capitalize"
                           >
-                            {theme}
+                            {theme === 'default' ? 'افتراضي' : theme === 'compact' ? 'مضغوط' : 'عصري'}
                           </Button>
                         ))}
                       </div>
                     </div>
 
                     <div className="space-y-4 pt-4 border-t">
-                      <h3 className="font-medium">Form Options</h3>
+                      <h3 className="font-medium">خيارات النموذج</h3>
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label>Allow Save as Draft</Label>
+                          <Label>السماح بالحفظ كمسودة</Label>
                           <p className="text-xs text-muted-foreground">
-                            Users can save progress and complete later
+                            يمكن للمستخدمين حفظ التقدم وإكمال النموذج لاحقاً
                           </p>
                         </div>
                         <input
@@ -401,9 +426,9 @@ function App() {
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label>Require Signature</Label>
+                          <Label>التوقيع مطلوب</Label>
                           <p className="text-xs text-muted-foreground">
-                            Form must be signed before submission
+                            يجب توقيع النموذج قبل الإرسال
                           </p>
                         </div>
                         <input
@@ -418,9 +443,9 @@ function App() {
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label>Notify on Submit</Label>
+                          <Label>إشعار عند الإرسال</Label>
                           <p className="text-xs text-muted-foreground">
-                            Send email notification when form is submitted
+                            إرسال إشعار بالبريد الإلكتروني عند تقديم النموذج
                           </p>
                         </div>
                         <input
@@ -445,35 +470,35 @@ function App() {
       <Dialog open={showNewFormDialog} onOpenChange={setShowNewFormDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Form</DialogTitle>
+            <DialogTitle>إنشاء نموذج جديد</DialogTitle>
             <DialogDescription>
-              Give your form a name and description to get started.
+              أدخل اسم النموذج ووصفه للبدء.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="form-name">Form Name *</Label>
+              <Label htmlFor="form-name">اسم النموذج *</Label>
               <Input
                 id="form-name"
-                placeholder="e.g., Employee Onboarding Form"
+                placeholder="مثال: نموذج تعيين موظف جديد"
                 value={newFormName}
                 onChange={(e) => setNewFormName(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="form-description">Description</Label>
+              <Label htmlFor="form-description">الوصف</Label>
               <Input
                 id="form-description"
-                placeholder="Brief description of the form's purpose"
+                placeholder="وصف مختصر لغرض النموذج"
                 value={newFormDescription}
                 onChange={(e) => setNewFormDescription(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="form-category">Category</Label>
+              <Label htmlFor="form-category">التصنيف</Label>
               <select
                 id="form-category"
                 value={newFormCategory}
@@ -482,7 +507,7 @@ function App() {
               >
                 {formCategories.filter((c) => c !== 'All').map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat}
+                    {categoryLabels[cat] || cat}
                   </option>
                 ))}
               </select>
@@ -491,9 +516,9 @@ function App() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowNewFormDialog(false)}>
-              Cancel
+              إلغاء
             </Button>
-            <Button onClick={createNewForm}>Create Form</Button>
+            <Button onClick={createNewForm}>إنشاء النموذج</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

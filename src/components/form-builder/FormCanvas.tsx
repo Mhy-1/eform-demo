@@ -195,7 +195,7 @@ function renderFieldPreview(field: FormField) {
           disabled
           className="w-full px-3 py-2 border rounded-md bg-muted/50 text-muted-foreground text-sm"
         >
-          <option>Select an option...</option>
+          <option>اختر خياراً...</option>
           {field.options?.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -207,7 +207,7 @@ function renderFieldPreview(field: FormField) {
       return (
         <div className="flex items-center gap-2">
           <input type="checkbox" disabled className="h-4 w-4" />
-          <span className="text-sm text-muted-foreground">Checkbox option</span>
+          <span className="text-sm text-muted-foreground">خيار متعدد</span>
         </div>
       );
     case 'radio':
@@ -225,14 +225,14 @@ function renderFieldPreview(field: FormField) {
       return (
         <div className="border-2 border-dashed rounded-md p-4 text-center">
           <p className="text-sm text-muted-foreground">
-            Drag and drop or click to upload
+            اسحب وأفلت أو انقر للرفع
           </p>
         </div>
       );
     case 'signature':
       return (
         <div className="border-2 border-dashed rounded-md p-8 text-center bg-muted/30">
-          <p className="text-sm text-muted-foreground">Signature pad</p>
+          <p className="text-sm text-muted-foreground">لوحة التوقيع</p>
         </div>
       );
     default:
@@ -273,9 +273,9 @@ export function FormCanvas({
         >
           {fields.length === 0 ? (
             <div className="text-center text-muted-foreground">
-              <p className="text-lg font-medium mb-1">Drag fields here</p>
+              <p className="text-lg font-medium mb-1">اسحب الحقول هنا</p>
               <p className="text-sm">
-                Start building your form by dragging fields from the left panel
+                ابدأ ببناء نموذجك بسحب الحقول من اللوحة الجانبية
               </p>
             </div>
           ) : (

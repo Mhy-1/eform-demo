@@ -5,6 +5,15 @@ import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { cn } from '../utils/cn';
 
+// Arabic category mapping
+const categoryLabels: Record<string, string> = {
+  'HR': 'الموارد البشرية',
+  'Safety': 'السلامة',
+  'Security': 'الأمن',
+  'Operations': 'العمليات',
+  'IT': 'تقنية المعلومات',
+};
+
 interface FormListProps {
   forms: FormDefinition[];
   onEdit: (form: FormDefinition) => void;
@@ -17,16 +26,16 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
   const getStatusBadge = (status: FormDefinition['status']) => {
     switch (status) {
       case 'published':
-        return <Badge variant="success">Published</Badge>;
+        return <Badge variant="success">منشور</Badge>;
       case 'draft':
-        return <Badge variant="secondary">Draft</Badge>;
+        return <Badge variant="secondary">مسودة</Badge>;
       case 'archived':
-        return <Badge variant="outline">Archived</Badge>;
+        return <Badge variant="outline">مؤرشف</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('ar-SA', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -37,9 +46,9 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <FileText className="w-12 h-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-1">No forms yet</h3>
+        <h3 className="text-lg font-medium mb-1">لا توجد نماذج</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Create your first form to get started
+          أنشئ نموذجك الأول للبدء
         </p>
       </div>
     );
@@ -62,7 +71,7 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
                   <FileText className="w-4 h-4 text-primary" />
                 </div>
                 <Badge variant="outline" className="text-xs">
-                  {form.category}
+                  {categoryLabels[form.category] || form.category}
                 </Badge>
               </div>
               {getStatusBadge(form.status)}
@@ -73,10 +82,10 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
           <CardContent>
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
               <span>
-                {form.sections.reduce((acc, s) => acc + s.fields.length, 0)} fields
+                {form.sections.reduce((acc, s) => acc + s.fields.length, 0)} حقل
               </span>
-              <span>v{form.version}</span>
-              <span>Updated {formatDate(form.updatedAt)}</span>
+              <span>الإصدار {form.version}</span>
+              <span>آخر تحديث {formatDate(form.updatedAt)}</span>
             </div>
             <div className="flex gap-2">
               <Button
@@ -88,8 +97,8 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
                   onEdit(form);
                 }}
               >
-                <Edit className="w-3.5 h-3.5 mr-1" />
-                Edit
+                <Edit className="w-3.5 h-3.5 ml-1" />
+                تعديل
               </Button>
               <Button
                 variant="outline"
@@ -100,8 +109,8 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
                   onPreview(form);
                 }}
               >
-                <Eye className="w-3.5 h-3.5 mr-1" />
-                Preview
+                <Eye className="w-3.5 h-3.5 ml-1" />
+                معاينة
               </Button>
               <Button
                 variant="ghost"
@@ -120,7 +129,7 @@ export function FormList({ forms, onEdit, onPreview, onDuplicate, onDelete }: Fo
                 className="h-9 w-9 text-destructive hover:text-destructive"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (confirm('Are you sure you want to delete this form?')) {
+                  if (confirm('هل أنت متأكد من حذف هذا النموذج؟')) {
                     onDelete(form.id);
                   }
                 }}
