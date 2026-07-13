@@ -301,22 +301,21 @@ function App() {
         <div className="flex flex-col h-screen">
           {/* Builder Header */}
           <header className="border-b bg-background px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="sm" onClick={handleBackToList}>
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <Button variant="ghost" size="sm" onClick={handleBackToList} className="shrink-0">
                   <ArrowRight className="w-4 h-4 ml-1" />
                   رجوع
                 </Button>
-                <div>
-                  <h1 className="font-semibold">{currentForm.name}</h1>
-                  <p className="text-xs text-muted-foreground">
-                    {currentForm.status === 'published' ? 'منشور' : 'مسودة'} - الإصدار
-                    {currentForm.version}
+                <div className="min-w-0">
+                  <h1 className="font-semibold truncate">{currentForm.name}</h1>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {currentForm.status === 'published' ? 'منشور' : 'مسودة'} - الإصدار {currentForm.version}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Tabs defaultValue="build" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                   <TabsList>
                     <TabsTrigger value="build">البناء</TabsTrigger>
@@ -325,14 +324,14 @@ function App() {
                   </TabsList>
                 </Tabs>
 
-                <div className="flex items-center gap-2 mr-4">
+                <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" onClick={exportFormJson}>
-                    <FileJson className="w-4 h-4 ml-1" />
-                    تصدير
+                    <FileJson className="w-4 h-4 sm:ml-1" />
+                    <span className="hidden sm:inline">تصدير</span>
                   </Button>
                   <Button variant="outline" size="sm" onClick={handleSaveForm}>
-                    <Save className="w-4 h-4 ml-1" />
-                    حفظ
+                    <Save className="w-4 h-4 sm:ml-1" />
+                    <span className="hidden sm:inline">حفظ</span>
                   </Button>
                   <Button size="sm" onClick={handlePublishForm}>
                     نشر
@@ -349,8 +348,8 @@ function App() {
             )}
 
             {activeTab === 'preview' && (
-              <div className="h-full overflow-y-auto p-6 bg-muted/20">
-                <div className="bg-background rounded-lg shadow-sm border p-6">
+              <div className="h-full overflow-y-auto p-3 sm:p-6 bg-muted/20">
+                <div className="bg-background rounded-lg shadow-sm border p-4 sm:p-6">
                   <div className="mb-6">
                     <h2 className="text-xl font-semibold">{currentForm.name}</h2>
                     <p className="text-muted-foreground">{currentForm.description}</p>
@@ -361,8 +360,8 @@ function App() {
             )}
 
             {activeTab === 'settings' && (
-              <div className="h-full overflow-y-auto p-6 bg-muted/20">
-                <div className="max-w-2xl mx-auto bg-background rounded-lg shadow-sm border p-6">
+              <div className="h-full overflow-y-auto p-3 sm:p-6 bg-muted/20">
+                <div className="max-w-2xl mx-auto bg-background rounded-lg shadow-sm border p-4 sm:p-6">
                   <h2 className="text-lg font-semibold mb-6">إعدادات النموذج</h2>
 
                   <div className="space-y-6">

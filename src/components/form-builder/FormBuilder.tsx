@@ -10,9 +10,11 @@ import {
   closestCenter,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { Layers, LayoutGrid, Settings2 } from 'lucide-react';
 import { FormField, FieldTypeConfig } from '../../types/form';
 import { fieldTypes } from '../../data/mockForms';
 import { generateId } from '../../utils/id';
+import { cn } from '../../utils/cn';
 import { FieldPalette } from './FieldPalette';
 import { FormCanvas } from './FormCanvas';
 import { FieldProperties } from './FieldProperties';
@@ -22,10 +24,16 @@ interface FormBuilderProps {
   onChange?: (fields: FormField[]) => void;
 }
 
+type MobilePanel = 'palette' | 'canvas' | 'properties';
+
 export function FormBuilder({ initialFields = [], onChange }: FormBuilderProps) {
   const [fields, setFields] = useState<FormField[]>(initialFields);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  // Below the md breakpoint the three panels can't fit side by side, so only
+  // one is shown at a time and this tracks which. Ignored on desktop, where
+  // all three panels are always visible.
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel>('canvas');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -43,6 +51,33 @@ export function FormBuilder({ initialFields = [], onChange }: FormBuilderProps) 
       onChange?.(newFields);
     },
     [onChange]
+  );
+
+  // Selecting a field also brings the properties panel forward on mobile,
+  // where only one panel is visible at a time.
+  const selectField = useCallback((fieldId: string | null) => {
+    setSelectedFieldId(fieldId);
+    if (fieldId) {
+      setMobilePanel('properties');
+    }
+  }, []);
+
+  const handleAddFieldFromPalette = useCallback(
+    (fieldTypeData: FieldTypeConfig) => {
+      const newField: FormField = {
+        id: `field-${generateId()}`,
+        type: fieldTypeData.type,
+        label: fieldTypeData.defaultConfig.label || fieldTypeData.label,
+        placeholder: fieldTypeData.defaultConfig.placeholder,
+        description: fieldTypeData.defaultConfig.description,
+        required: fieldTypeData.defaultConfig.required || false,
+        width: fieldTypeData.defaultConfig.width || 'full',
+        options: fieldTypeData.defaultConfig.options,
+      };
+      updateFields([...fields, newField]);
+      selectField(newField.id);
+    },
+    [fields, updateFields, selectField]
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -84,7 +119,7 @@ export function FormBuilder({ initialFields = [], onChange }: FormBuilderProps) 
             updateFields([...fields, newField]);
           }
         }
-        setSelectedFieldId(newField.id);
+        selectField(newField.id);
       }
     } else {
       // Reordering existing fields
@@ -120,9 +155,15 @@ export function FormBuilder({ initialFields = [], onChange }: FormBuilderProps) 
       const newFields = [...fields];
       newFields.splice(index + 1, 0, duplicatedField);
       updateFields(newFields);
-      setSelectedFieldId(duplicatedField.id);
+      selectField(duplicatedField.id);
     }
   };
+
+  const mobileTabs: { id: MobilePanel; label: string; icon: typeof Layers }[] = [
+    { id: 'palette', label: 'الحقول', icon: Layers },
+    { id: 'canvas', label: `النموذج${fields.length > 0 ? ` (${fields.length})` : ''}`, icon: LayoutGrid },
+    { id: 'properties', label: 'الخصائص', icon: Settings2 },
+  ];
 
   return (
     <DndContext
@@ -131,20 +172,69 @@ export function FormBuilder({ initialFields = [], onChange }: FormBuilderProps) 
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full">
-        <FieldPalette />
-        <FormCanvas
-          fields={fields}
-          selectedFieldId={selectedFieldId}
-          onSelectField={setSelectedFieldId}
-          onDeleteField={handleDeleteField}
-          onDuplicateField={handleDuplicateField}
-        />
-        <FieldProperties
-          field={selectedField}
-          onUpdate={handleUpdateField}
-          onClose={() => setSelectedFieldId(null)}
-        />
+      <div className="flex flex-col h-full min-h-0 md:flex-row">
+        {/* Mobile panel switcher: below md, panels can't fit side by side,
+            so only one shows at a time. Hidden on desktop, where all three
+            panels are always visible together. */}
+        <div className="md:hidden shrink-0 border-b bg-background">
+          <div className="grid grid-cols-3">
+            {mobileTabs.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setMobilePanel(id)}
+                className={cn(
+                  'flex flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium border-b-2 transition-colors',
+                  mobilePanel === id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                )}
+                aria-current={mobilePanel === id}
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            'min-h-0',
+            mobilePanel === 'palette' ? 'flex-1' : 'hidden',
+            'md:flex-none md:block'
+          )}
+        >
+          <FieldPalette onAddField={handleAddFieldFromPalette} />
+        </div>
+        <div
+          className={cn(
+            'min-h-0',
+            mobilePanel === 'canvas' ? 'flex-1' : 'hidden',
+            'md:flex-1 md:block'
+          )}
+        >
+          <FormCanvas
+            fields={fields}
+            selectedFieldId={selectedFieldId}
+            onSelectField={selectField}
+            onDeleteField={handleDeleteField}
+            onDuplicateField={handleDuplicateField}
+          />
+        </div>
+        <div
+          className={cn(
+            'min-h-0',
+            mobilePanel === 'properties' ? 'flex-1' : 'hidden',
+            'md:flex-none md:block'
+          )}
+        >
+          <FieldProperties
+            field={selectedField}
+            onUpdate={handleUpdateField}
+            onClose={() => setSelectedFieldId(null)}
+          />
+        </div>
       </div>
       <DragOverlay>
         {activeId && activeId.startsWith('palette-') && (
