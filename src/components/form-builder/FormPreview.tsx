@@ -82,15 +82,26 @@ export function FormPreview({ fields, settings, onSubmit }: FormPreviewProps) {
 
     switch (field.type) {
       case 'text':
+        return (
+          <input
+            id={field.id}
+            type="text"
+            placeholder={field.placeholder}
+            {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
+            className={baseInputClass}
+          />
+        );
+
       case 'email':
       case 'phone':
         return (
           <input
             id={field.id}
-            type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'text'}
+            type={field.type === 'email' ? 'email' : 'tel'}
+            dir="ltr"
             placeholder={field.placeholder}
             {...register(field.id, { required: field.required && 'هذا الحقل مطلوب' })}
-            className={baseInputClass}
+            className={cn(baseInputClass, 'text-right')}
           />
         );
 

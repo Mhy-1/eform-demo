@@ -14,9 +14,9 @@ interface FieldPropertiesProps {
 export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesProps) {
   if (!field) {
     return (
-      <div className="w-72 border-r bg-muted/30 p-4">
+      <div className="w-full h-full md:w-72 md:border-r bg-muted/30 p-4">
         <p className="text-sm text-muted-foreground text-center mt-8">
-          اختر حقلاً لتعديل خصائصه
+          اختر حقلاً من النموذج لتعديل خصائصه
         </p>
       </div>
     );
@@ -46,6 +46,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
   };
 
   const hasOptions = field.type === 'select' || field.type === 'radio';
+  const isBidiSensitive = field.type === 'phone' || field.type === 'email';
 
   // Arabic field type labels
   const fieldTypeLabels: Record<string, string> = {
@@ -66,7 +67,7 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
   };
 
   return (
-    <div className="w-72 border-r bg-muted/30 overflow-y-auto">
+    <div className="w-full h-full md:w-72 md:border-r bg-muted/30 overflow-y-auto">
       <div className="sticky top-0 bg-muted/30 border-b p-4 flex items-center justify-between">
         <h3 className="font-semibold">خصائص الحقل</h3>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
@@ -91,6 +92,8 @@ export function FieldProperties({ field, onUpdate, onClose }: FieldPropertiesPro
             <Label htmlFor="field-placeholder">نص توضيحي</Label>
             <Input
               id="field-placeholder"
+              dir={isBidiSensitive ? 'ltr' : undefined}
+              className={isBidiSensitive ? 'text-right' : undefined}
               value={field.placeholder || ''}
               onChange={(e) => updateField({ placeholder: e.target.value })}
             />

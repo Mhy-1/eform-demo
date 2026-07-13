@@ -145,14 +145,32 @@ function SortableField({
 function renderFieldPreview(field: FormField) {
   switch (field.type) {
     case 'text':
-    case 'email':
-    case 'phone':
       return (
         <input
           type="text"
           placeholder={field.placeholder}
           disabled
           className="w-full px-3 py-2 border rounded-md bg-muted/50 text-muted-foreground text-sm"
+        />
+      );
+    case 'email':
+      return (
+        <input
+          type="text"
+          dir="ltr"
+          placeholder={field.placeholder}
+          disabled
+          className="w-full px-3 py-2 border rounded-md bg-muted/50 text-muted-foreground text-sm text-right"
+        />
+      );
+    case 'phone':
+      return (
+        <input
+          type="tel"
+          dir="ltr"
+          placeholder={field.placeholder}
+          disabled
+          className="w-full px-3 py-2 border rounded-md bg-muted/50 text-muted-foreground text-sm text-right"
         />
       );
     case 'textarea':
@@ -260,7 +278,7 @@ export function FormCanvas({
   });
 
   return (
-    <div className="flex-1 bg-muted/20 p-6 overflow-y-auto">
+    <div className="w-full h-full md:flex-1 bg-muted/20 p-4 sm:p-6 overflow-y-auto">
       <div className="max-w-3xl mx-auto">
         <div
           ref={setNodeRef}
@@ -272,10 +290,10 @@ export function FormCanvas({
           onClick={() => onSelectField(null)}
         >
           {fields.length === 0 ? (
-            <div className="text-center text-muted-foreground">
+            <div className="text-center text-muted-foreground px-4">
               <p className="text-lg font-medium mb-1">اسحب الحقول هنا</p>
               <p className="text-sm">
-                ابدأ ببناء نموذجك بسحب الحقول من اللوحة الجانبية
+                اسحب حقلاً من اللوحة الجانبية، أو انقر عليه لإضافته مباشرة
               </p>
             </div>
           ) : (
